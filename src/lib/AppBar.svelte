@@ -2,6 +2,7 @@
     import { AppBar } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { faBars, faCircleUser } from '@fortawesome/free-solid-svg-icons';
+	import { LightSwitch } from '@skeletonlabs/skeleton';
 </script>
 
 <AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
@@ -10,6 +11,6 @@
 	</svelte:fragment>
 	Orders
 	<svelte:fragment slot="trail">
-		<Fa icon={faCircleUser} size="lg" />
+		<LightSwitch />
 	</svelte:fragment>
 </AppBar>
