@@ -1,56 +1,50 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
+	import { ProgressRadial, Table, tableMapperValues } from '@skeletonlabs/skeleton';
+	import type { TableSource } from '@skeletonlabs/skeleton';
 
-    import { productStore } from '../../stores/product.store';
-    import type { Product } from '../../intefaces/product.interface';
+	import { productStore } from '../../stores/product.store';
+	import type { Product } from '../../intefaces/product.interface';
 
-    onMount(async() => {
-        const productos = await getProducts();
-        console.log(productos);
-        productStore.setAll(productos);
-    });
+	let tableSimple: TableSource = {
+		head: [],
+		body: []
+	};
 
+	onMount(async () => {
+		const productos = await getProducts();
 
-    async function getProducts() : Promise<Product[]>{
-        try {
-            const response = await fetch('https://fakestoreapi.com/products');
-            return await response.json();
-        } catch (error) {
-            console.log(error);
-            return [];
-        }
+        const total = productos.reduce((prev, curr) => prev + curr.price, 0);
+		productStore.setAll(productos);
+
+		tableSimple = {
+			head: ['Sku', 'Producto', 'Descripcion', 'Categoria', 'Precio'],
+			body: tableMapperValues($productStore, ['id', 'title', 'description', 'category', 'price']),
+			meta: tableMapperValues($productStore, ['id', 'title']),
+			foot: ['Total', '', '', '',`$${total}`]
+		};
+	});
+
+	async function getProducts(): Promise<Product[]> {
+		try {
+			const response = await fetch('https://fakestoreapi.com/products?limit=10');
+			return await response.json();
+		} catch (error) {
+			return [];
+		}
+	}
+
+    const selected = ( e : any ) => {
+        console.log(e.detail);
     }
-
-    
 
 </script>
 
-<div class="table-container">
-	<table class="table table-hover">
-		<thead>
-			<tr>
-                <th>Sku</th>
-				<th>Producto</th>
-				<th>Precio</th>
-				<th>Descripcion</th>
-			</tr>
-		</thead>
-		<tbody>
-			<!-- {#each tableArr as row, i} -->
-				<tr>
-					<td>row.position</td>
-					<td>row.name</td>
-					<td>row.symbol</td>
-					<td>row.weight</td>
-				</tr>
-			<!-- {/each} -->
-		</tbody>
-		<tfoot>
-			<tr>
-				<th colspan="3">Calculated Total Weight</th>
-				<td>totalWeight</td>
-			</tr>
-		</tfoot>
-	</table>
-</div>
 
+{#if $productStore.length > 0}
+	<Table source={tableSimple} interactive={true} on:selected={selected}/>
+{:else}
+	<div class="flex flex-row min-h-screen justify-center items-center">
+		<ProgressRadial value={undefined} />
+	</div>
+{/if}
