@@ -97,8 +97,8 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<th colspan="4">Calculated Total Weight</th>
-					<td>${total}</td>
+					<th colspan="4">Total</th>
+					<th>${total}</th>
 				</tr>
 			</tfoot>
 		</table>
